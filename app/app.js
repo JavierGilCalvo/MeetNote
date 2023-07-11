@@ -1,37 +1,21 @@
 // Importamos los módulos necesarios
 const express = require('express')
+const routes = require('./routes/routes')
 const cors = require('cors')
 require('dotenv').config()
-const bodyParser = require('body-parser')
-
-// Importamos nuestros controladores
-const transcriptController = require('./controllers/transcriptController')
-const summaryController = require('./controllers/summaryController')
 
 // Iniciamos nuestra aplicación Express
 const app = express()
 
-// Configuramos nuestra aplicación para usar bodyParser y cors
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
+// Configuramos nuestra aplicación para usar json y cors
 app.use(cors())
+app.use(express.json())
 
-// Definimos una ruta para manejar las solicitudes de transcripción
-app.post('/transcript', transcriptController.getTranscript)
-
-// Definimos una ruta para manejar las solicitudes de resumen
-app.post('/summary', summaryController.getSummary)
+// Definimos el enrutador para manejar las solicitudes
+app.use('/api/v1', routes)
 
 // Configuramos la aplicación para escuchar en un puerto específico
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
-  console.log(`Servidor en marcha en el puerto ${PORT}`)
-})
-
-const useReplicate = require('./src/modules/transcription/transcription')
-
-console.log('Comenzamos la replicación...')
-
-useReplicate().then(() => {
-  console.log('TRANSCRITO!')
+  console.log(`Server running on port: ${PORT}`)
 })

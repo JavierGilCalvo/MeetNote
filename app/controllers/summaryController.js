@@ -2,11 +2,13 @@
 
 const summaryService = require('../services/summary')
 
-exports.getSummary = async (req, res) => {
+exports.generateSummary = async (req, res) => {
+  const { transcription, description } = req.body
+
   try {
-    const summary = await summaryService.getSummary(req.body.transcript, req.body.explanation)
+    const summary = await summaryService.getSummary(transcription, description)
     res.json({ summary })
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    res.status(500).json({ error: 'An error occurred while generating the summary.' })
   }
 }

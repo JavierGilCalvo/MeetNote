@@ -2,7 +2,7 @@ require('dotenv').config()
 
 const { Configuration, OpenAIApi } = require('openai')
 
-const getTranscription = async (audio, explanationGuide) => {
+const getTranscription = async (audio, promptExplanation) => {
   const configuration = new Configuration({
     apiKey: process.env.API_OPENAI
   })
@@ -10,7 +10,7 @@ const getTranscription = async (audio, explanationGuide) => {
   const resp = await openai.createTranscription(
     audio,
     'whisper-1',
-    explanationGuide
+    promptExplanation
   )
   return resp
 }
