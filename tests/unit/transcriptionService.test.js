@@ -6,7 +6,7 @@ const path = require('path')
 describe('TranscriptionService', () => {
   test('should transcribe audio and return transcript', async () => {
     // We read the sample audio file.
-    const audioFile = fs.createReadStream(path.resolve(__dirname, '../../app/mocks/ejemplo_corto.m4a'))
+    const audioFile = fs.createReadStream(path.resolve(__dirname, '../../app/mocks/output1.mp3'))
     const promptExplanation =
     `Por favor, proporciona una transcripción precisa y literal del audio. 
     Debería reflejar fielmente lo que se dijo, incluyendo cualquier pausa o repetición. 
