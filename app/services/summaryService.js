@@ -1,7 +1,7 @@
 require('dotenv').config()
 const openai = require('openai')
-
 openai.apiKey = process.env.API_OPENAI
+const { SYSTEM_MESSAGE, USER_MESSAGE, MAX_TOKENS } = require('../constants')
 
 /**
  * Best practices: https://platform.openai.com/docs/guides/gpt-best-practices
@@ -9,26 +9,18 @@ openai.apiKey = process.env.API_OPENAI
  *
  *
  */
-async function generateSummary (transcript, description) {
+async function generateSummary (transcript, description = '') {
   try {
     const gptResponse = await openai.createChatCompletion({
       model: 'gpt-3.5-turbo',
       messages: [
-        { role: 'system', content: 'You are an expert summary agent, you are able to summarize a transcription of a meeting, propose next steps and action items.' },
+        { role: 'system', content: SYSTEM_MESSAGE },
         {
           role: 'user',
-          content: `We have a meeting transcript and its description. We need a summary, the most important points, action items, and next steps. Detect the language of the transcription and give a response
-        in the same one.
-
-        Meeting Description:
-        ${description}
-
-        Meeting Transcript:
-        ${transcript}
-        `
+          content: USER_MESSAGE + (description.length > 0 ? 'Meeting Description: ' + description : '') + '\n' + transcript
         }
       ],
-      max_tokens: 3500
+      max_tokens: MAX_TOKENS
     })
 
     const summary = gptResponse.data.choices[0].message.content.trimEnd().trimStart()
