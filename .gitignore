@@ -1,13 +1,10 @@
 ## node_modules
 node_modules
 
-filesForTest/
-
-long_example.mp3
-
 ## mocks
 mocks
 
 ## Environment Variables
 .env
 
+long_example.mp3
