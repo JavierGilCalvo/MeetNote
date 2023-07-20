@@ -3,29 +3,29 @@ const splitAudio = require('../../app/services/splitAudioService.js')
 const fs = require('fs')
 const path = require('path')
 
-const testResultsDirectory = path.resolve(__dirname, '../filesFromTest')
-const testFilesDirectory = path.resolve(__dirname, '../filesForTest')
+const testInputFilesDirectory = path.resolve(__dirname, '../inputTestFiles')
+const testOutputFilesDirectory = path.resolve(__dirname, '../outputTestFiles')
 
 /* eslint-env jest */
 describe('TranscriptionService', () => {
   describe('splitAudio', () => {
     it('splits the audio into segments', async () => {
       // Arrange
-      const audioFilePath = `${testFilesDirectory}/long_example.mp3`
+      const audioFilePath = `${testInputFilesDirectory}/short_example.mp3`
 
       // Act
-      const segments = await splitAudio(audioFilePath, testResultsDirectory, 1200)
+      const segments = await splitAudio(audioFilePath, testOutputFilesDirectory, 120)
       // Assert
       expect(segments).toBeDefined()
       expect(segments.length).toBeGreaterThan(0)
-      // additional assertions based on your requirements...
+      // additional assertions...
     })
   })
 
   describe('transcribeSegment', () => {
     test('should transcribe audio and return transcript', async () => {
       // We read the sample audio file.
-      const audioFile = fs.createReadStream(`${testFilesDirectory}/short_example.m4a`)
+      const audioFile = fs.createReadStream(`${testInputFilesDirectory}/short_example.m4a`)
       const promptExplanation =
       `Por favor, proporciona una transcripción precisa y literal del audio. 
       Debería reflejar fielmente lo que se dijo, incluyendo cualquier pausa o repetición. 
@@ -48,10 +48,13 @@ describe('TranscriptionService', () => {
 
   afterAll(() => {
     // After all tests, we remove the content of the test directory
-    if (fs.existsSync(testResultsDirectory)) {
-      const files = fs.readdirSync(testResultsDirectory)
+    if (fs.existsSync(testOutputFilesDirectory)) {
+      const files = fs.readdirSync(testOutputFilesDirectory)
       for (const file of files) {
-        fs.unlinkSync(path.join(testResultsDirectory, file))
+        // Skip .gitkeep
+        if (file !== '.gitkeep') {
+          fs.unlinkSync(path.join(testOutputFilesDirectory, file))
+        }
       }
     }
   })
