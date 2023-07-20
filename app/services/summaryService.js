@@ -11,23 +11,27 @@ openai.apiKey = process.env.API_OPENAI
  */
 async function generateSummary (transcript, description) {
   try {
-    const gptResponse = await openai.Completion.create({
-      engine: 'davinci',
-      prompt: `We have a meeting transcript and its description. We need a summary, the most important points, action items, and next steps.
+    const gptResponse = await openai.createChatCompletion({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        { role: 'system', content: 'You are an expert summary agent, you are able to summarize a transcription of a meeting, propose next steps and action items.' },
+        {
+          role: 'user',
+          content: `We have a meeting transcript and its description. We need a summary, the most important points, action items, and next steps. Detect the language of the transcription and give a response
+        in the same one.
 
-            Meeting Description:
-            ${description}
+        Meeting Description:
+        ${description}
 
-            Meeting Transcript:
-            ${transcript}
-
-            Summary:
-            `,
-      temperature: 0.2,
-      max_tokens: 300
+        Meeting Transcript:
+        ${transcript}
+        `
+        }
+      ],
+      max_tokens: 3500
     })
 
-    const summary = gptResponse.data.choices[0].text.trim()
+    const summary = gptResponse.data.choices[0].message.content.trimEnd().trimStart()
 
     const actionPromptResponse = await openai.Completion.create({
       engine: 'davinci',
