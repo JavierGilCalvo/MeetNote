@@ -2,19 +2,21 @@ const getTranscription = require('../../app/services/transcriptionService.js')
 const splitAudio = require('../../app/services/splitAudioService.js')
 const fs = require('fs')
 const path = require('path')
+const uuid = require('uuid')
 
 const testInputFilesDirectory = path.resolve(__dirname, '../inputTestFiles')
 const testOutputFilesDirectory = path.resolve(__dirname, '../outputTestFiles')
+let segments = []
 
 /* eslint-env jest */
 describe('TranscriptionService', () => {
   describe('splitAudio', () => {
     it('splits the audio into segments', async () => {
       // Arrange
-      const audioFilePath = `${testInputFilesDirectory}/short_example.mp3`
+      const audioFilePath = path.join(testInputFilesDirectory, 'long_example.mp3')
 
       // Act
-      const segments = await splitAudio(audioFilePath, testOutputFilesDirectory, 120)
+      segments = await splitAudio(audioFilePath, testOutputFilesDirectory, 900)
       // Assert
       expect(segments).toBeDefined()
       expect(segments.length).toBeGreaterThan(0)
@@ -24,29 +26,33 @@ describe('TranscriptionService', () => {
 
   describe('transcribeSegment', () => {
     test('should transcribe audio and return transcript', async () => {
-      // We read the sample audio file.
-      const audioFile = fs.createReadStream(`${testInputFilesDirectory}/short_example.m4a`)
+      const id = uuid.v4()
+      const outputFilePrefix = `output_${id}_`
       const promptExplanation =
       `Por favor, proporciona una transcripción precisa y literal del audio. 
       Debería reflejar fielmente lo que se dijo, incluyendo cualquier pausa o repetición. 
       La transcripción debe mantenerse en primera persona y no interpretar ni añadir nada que no esté explícitamente dicho en el audio.
       Tampoco se deben añadir fillers que no aportan nada a lo que se está diciendo.`
+      // We read the sample audio file.
+      for (const segment of segments) {
+        const audioFile = fs.createReadStream(path.join(testOutputFilesDirectory, segment))
+        // We attempt transcription.
+        const { data: { text } } = await getTranscription(audioFile, promptExplanation)
 
-      // We attempt transcription.
-      const { data: { text } } = await getTranscription(audioFile, promptExplanation)
+        fs.writeFileSync(path.join(testOutputFilesDirectory, outputFilePrefix + '%03d.txt'), text)
+        // We verify that the result is a string (if your function returns an object with more data, you should adjust this).
+        expect(typeof text).toBe('string')
 
-      // We verify that the result is a string (if your function returns an object with more data, you should adjust this).
-      expect(typeof text).toBe('string')
+        // We verify that the result is not empty.
+        expect(text).not.toBe('')
 
-      // We verify that the result is not empty.
-      expect(text).not.toBe('')
-
-      // We can even check that the length of the string is reasonable (adjust the value according to our needs).
-      expect(text.length).toBeGreaterThan(100) // This value may vary depending on the sample audio.
+        // We can even check that the length of the string is reasonable (adjust the value according to our needs).
+        expect(text.length).toBeGreaterThan(100) // This value may vary depending on the sample audio.
+      }
     })
   })
 
-  afterAll(() => {
+  /* afterAll(() => {
     // After all tests, we remove the content of the test directory
     if (fs.existsSync(testOutputFilesDirectory)) {
       const files = fs.readdirSync(testOutputFilesDirectory)
@@ -57,5 +63,5 @@ describe('TranscriptionService', () => {
         }
       }
     }
-  })
+  }) */
 })

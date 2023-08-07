@@ -5,11 +5,11 @@ const path = require('path')
 const transcriptService = require('../services/transcriptionService')
 
 exports.transcribeAudio = async (req, res) => {
-  const { audio, explanation } = req.body
+  const { audio, description } = req.body
   try {
     // Aquí tenemos que coger el audio
     fs.createReadStream(path.resolve(__dirname, 'mocks/ejemplo_corto.m4a'))
-    const transcript = await transcriptService.getTranscript(audio, explanation)
+    const transcript = await transcriptService.getTranscript(audio, description)
     res.json({ transcript })
   } catch (err) {
     res.status(500).json({ error: err.message })
