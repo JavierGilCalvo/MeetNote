@@ -17,7 +17,7 @@ const userSummaryExtended = (fragment, context = '') => {
       Make the summary impersonal and avoid specifically mentioning meeting participants, you can use third-person phrases and avoid naming individuals.
       Your response must be in the same language as the FRAGMENT TRANSCRIPT used for your response, NOT in the same language than this paragraph. For example, if the FRAGMENT TRANSCRIPT is in spanish, the summary must be in spanish.
 
-      ${context.length > 0 ? 'Fragment Context: ' + context : ''}
+      ${context.length > 0 ? 'Meeting Context: ' + context : ''}
       
       Fragment Transcript:
       ${fragment}
@@ -37,6 +37,7 @@ const executiveSummary = (summary, description = '') => {
         
          Make the summary impersonal and avoid specifically mentioning meeting participants, you can use third-person phrases and avoid naming individuals.
         Your response must be in the same language as the MEETING SUMMARY used for your response, NOT in the same language than this paragraph. For example, if the MEETING SUMMARY is in spanish, the summary must be in spanish.
+        The section must start with the title: "Summary:", in the same language of the summary.
   
         ${description.length > 0 ? 'Meeting Description: ' + description : ''}
         

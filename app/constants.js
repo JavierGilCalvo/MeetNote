@@ -21,5 +21,8 @@ module.exports = {
   MAX_TOKENS_EXECUTIVE_SUMMARY: 1000,
   MAX_TOKENS_NEXT_STEPS: 500,
   GPT_3: 'gpt-3.5-turbo-16k',
-  GPT_4: 'gpt-4'
+  GPT_4: 'gpt-4',
+  TEMP_AUDIO_DIR_NAME: '../temp_audio_fragments',
+  AUDIO_FRAGMENT_DURATION: 900,
+  TEMP_MEETING_REPORT_DIR_NAME: '../temp_meeting_report'
 }

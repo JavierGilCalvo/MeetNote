@@ -8,3 +8,7 @@ mocks
 .env
 
 long_example.mp3
+
+temp_audio_fragments
+temp_meeting_report
+uploads

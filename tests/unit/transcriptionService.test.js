@@ -16,7 +16,7 @@ describe('TranscriptionService', () => {
       const audioFilePath = path.join(testInputFilesDirectory, 'long_example.mp3')
 
       // Act
-      segments = await splitAudio(audioFilePath, testOutputFilesDirectory, 900)
+      segments = await splitAudio(audioFilePath, testOutputFilesDirectory)
       // Assert
       expect(segments).toBeDefined()
       expect(segments.length).toBeGreaterThan(0)
@@ -35,9 +35,8 @@ describe('TranscriptionService', () => {
       Tampoco se deben añadir fillers que no aportan nada a lo que se está diciendo.`
       // We read the sample audio file.
       for (const segment of segments) {
-        const audioFile = fs.createReadStream(path.join(testOutputFilesDirectory, segment))
         // We attempt transcription.
-        const { data: { text } } = await getTranscription(audioFile, promptExplanation)
+        const { data: { text } } = await getTranscription(path.join(testOutputFilesDirectory, segment), promptExplanation)
 
         fs.writeFileSync(path.join(testOutputFilesDirectory, outputFilePrefix + '%03d.txt'), text)
         // We verify that the result is a string (if your function returns an object with more data, you should adjust this).
